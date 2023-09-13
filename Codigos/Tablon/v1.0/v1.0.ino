@@ -68,7 +68,6 @@ void setUpPinModes(){
 
   analogWrite(MOTOR_A1, 0);
   analogWrite(MOTOR_A2, 0);
-
   analogWrite(MOTOR_B1, 0);
   analogWrite(MOTOR_B2, 0);
 }
