@@ -1,5 +1,4 @@
 #include <Ps3Controller.h>
-#include <Arduino.h>
 
 //-------------- Pines de motores
 
@@ -40,57 +39,15 @@ int Vizquierda = 0;
 
 // -------------- Variables de estado
 int Estado = 0;
-boolean HabilitarMovimiento = false;
+boolean HabilitarMovimiento = true;
 int yValue = 0;
 int xValue = 0;
 
 
-void setup(){
-
-  InicializacionPines();
-  Ps3.attach(notify);
-  Ps3.begin();
-  
-  HabilitarMovimiento = false; //El movimiento del carro comienza deshabilitado
-  Estado = 0;  //Inicializa en reposo
-}
-
-void loop(){
-  
-  if(HabilitarMovimiento == true){
-
-    if(Estado == REPOSO){
-      MoverMotores(0,0,0,0);
-
-    }else if(Estado == ADELANTE){
-      MoverMotores(0,Vavance,0,Vavance);
-
-    }else if(Estado == ATRAS){
-      MoverMotores(Vavance,0,Vavance,0);
-
-    }else if(Estado == DERECHA){
-      MoverMotores(0,Vgiro,Vgiro,0);
-
-    }else if(Estado == IZQUIERDA){
-      MoverMotores(Vavance,0,0,Vavance);
-
-    }else if(Estado == ADELANTE_DERECHA){
-      MoverMotores(0,Vavance,0,Vgiro);
-
-    }else if(Estado == ADELANTE_IZQUIERDA){
-      MoverMotores(0,Vgiro,0,Vavance);
-
-    }else if(Estado == ATRAS_DERECHA){
-      MoverMotores(Vgiro,0,Vavance,0);
-      
-    }else if(Estado == ATRAS_IZQUIERDA){
-      MoverMotores(Vavance,0,Vgiro,0);
-
-    }
-  }
-}
-
 void notify(){
+
+  Serial.println("Notificacion del control");
+
   boolean habilidarMovimiento = Ps3.event.button_down.square;
   int yAxisValue =(Ps3.data.analog.stick.ly) + 1;  //Left stick  - y axis - forward/backward car movement
   int xAxisValue =(Ps3.data.analog.stick.rx) + 1;  //Right stick - x axis - left/right car movement
@@ -133,11 +90,73 @@ void MoverMotores(int MA1, int MA2, int MB1, int MB2){
   analogWrite(MOTOR_B2, MB2);
 }
 
+void onConnect(){
+  Serial.println("Connected!.");
+}
+
 void InicializacionPines(){
   pinMode(MOTOR_A1,OUTPUT);
   pinMode(MOTOR_A2,OUTPUT);
   pinMode(MOTOR_B1,OUTPUT);
   pinMode(MOTOR_B2,OUTPUT);
 }
+
+void setup(){
+
+  Serial.begin(115200);
+
+  Serial.println("Inicializacion control");
+  InicializacionPines();
+  Ps3.attach(notify);
+  Ps3.attachOnConnect(onConnect);
+  Ps3.begin();
+  Serial.println("termina Inicializacion control");
+  
+  HabilitarMovimiento = false; //El movimiento del carro comienza deshabilitado
+  Estado = 0;  //Inicializa en reposo
+}
+
+void loop(){
+  
+  if(HabilitarMovimiento == true){
+
+    Serial.println("Habilitado");
+
+    if(Estado == REPOSO){
+      MoverMotores(0,0,0,0);
+
+    }else if(Estado == ADELANTE){
+      MoverMotores(0,Vavance,0,Vavance);
+
+    }else if(Estado == ATRAS){
+      MoverMotores(Vavance,0,Vavance,0);
+
+    }else if(Estado == DERECHA){
+      MoverMotores(0,Vgiro,Vgiro,0);
+
+    }else if(Estado == IZQUIERDA){
+      MoverMotores(Vavance,0,0,Vavance);
+
+    }else if(Estado == ADELANTE_DERECHA){
+      MoverMotores(0,Vavance,0,Vgiro);
+
+    }else if(Estado == ADELANTE_IZQUIERDA){
+      MoverMotores(0,Vgiro,0,Vavance);
+
+    }else if(Estado == ATRAS_DERECHA){
+      MoverMotores(Vgiro,0,Vavance,0);
+      
+    }else if(Estado == ATRAS_IZQUIERDA){
+      MoverMotores(Vavance,0,Vgiro,0);
+
+    }
+  }else{
+    MoverMotores(0,0,0,0);
+  }
+
+  delay(100);
+}
+
+
 
 
